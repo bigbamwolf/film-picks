@@ -7,7 +7,7 @@
 :root{
   --bg:#f3f2ee; --panel:#ffffff; --fg:#1d1c22; --muted:#6b6873; --line:#dcd9e0; --grid:#ecebef;
   --high:#d6336c; --high-bg:#fde3ec; --mid:#d98a00; --mid-bg:#fff0cf; --low:#4f6fb3; --low-bg:#e2e9f8;
-  --clash:#b02020; --chosen:#1d1c22;
+  --clash:#b02020; --chosen:#1d1c22; --queue:#0f8a7a; --queue-bg:#d9f3ee;
   --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
   --body:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
@@ -16,11 +16,11 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#141318; --panel:#1c1b22; --fg:#efedf3; --muted:#9d99a8; --line:#33313c; --grid:#24232b;
   --high:#ff6b9a; --high-bg:#3a1a27; --mid:#ffb938; --mid-bg:#3a2c10; --low:#86a6ef; --low-bg:#1c2640;
-  --clash:#ff7070; --chosen:#efedf3; color-scheme:dark}}
+  --clash:#ff7070; --chosen:#efedf3; --queue:#4fd1bd; --queue-bg:#123530; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#141318; --panel:#1c1b22; --fg:#efedf3; --muted:#9d99a8; --line:#33313c; --grid:#24232b;
   --high:#ff6b9a; --high-bg:#3a1a27; --mid:#ffb938; --mid-bg:#3a2c10; --low:#86a6ef; --low-bg:#1c2640;
-  --clash:#ff7070; --chosen:#efedf3; color-scheme:dark}
+  --clash:#ff7070; --chosen:#efedf3; --queue:#4fd1bd; --queue-bg:#123530; color-scheme:dark}
 body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:14px}
 .wrap{padding-inline:16px;padding-block:24px 40px;max-width:1280px;margin:0 auto;display:grid;gap:18px}
 header{display:grid;gap:6px}
@@ -55,6 +55,9 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,5vw,44px);lin
 .blk.chosen{border-width:3px;border-color:var(--chosen);z-index:2}
 .blk.chosen .tag::after{content:"  CHOSEN";color:var(--chosen)}
 .blk.dim{opacity:.28}
+.q{position:absolute;border-radius:6px;border:1.5px dashed var(--queue);background:var(--queue-bg);color:var(--fg);padding:4px 7px;display:grid;align-content:start;gap:1px;overflow:hidden;z-index:1}
+.q b{font:600 9.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--queue)}.q span{font:500 10.5px var(--mono);color:var(--muted)}
+.pay{font:700 9.5px var(--mono);letter-spacing:.06em;padding:1px 5px;border-radius:4px;justify-self:start;margin-left:3px}.pay.paid{background:var(--fg);color:var(--panel)}.pay.free{border:1.5px solid var(--queue);color:var(--queue)}
 .blk.cc{border-color:var(--clash);border-width:3px}.blk.cc .tag::after{content:"  CLASH";color:var(--clash)}
 .ccw{background:var(--panel);border:2px solid var(--clash);border-radius:8px;padding:10px 14px;font-size:13px;display:grid;gap:4px}.ccw b{color:var(--clash);font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
 .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--muted)}
@@ -84,7 +87,7 @@ h2{font-family:var(--display);font-size:20px;margin:6px 0 0}
 <header>
   <div class="eyebrow">French Film Festival · QCinema · Japanese Film Festival · Cinemas · November 7 to 29, 2026</div>
   <h1>November 2026 Festival Picks</h1>
-  <p class="sub">Every screening of the films on my list across three festivals and regular cinemas, coloured by priority. Films with a date but no showtime yet sit in the top row of their day. Slots already on my Google Calendar start out chosen. Tap a screening to choose it and the other screenings of that film fade out. A red outline marks screenings that overlap another one.</p>
+  <p class="sub">Every screening of the films on my list across three festivals and regular cinemas, coloured by priority. Films with a date but no showtime yet sit in the top row of their day. Slots already on my Google Calendar start out chosen. Tap a screening to choose it and the other screenings of that film fade out. PAID means a QCinema ticket (200, buy on Ticketnet). FREE screenings have no reserved seats, so each chosen one gets a teal queue tile: an hour before, or right after the previous film if that ends later. A red outline marks screenings that overlap another one.</p>
 </header>
 <div class="bar" id="bar">
   <button class="chip" id="f-high" data-p="high" aria-pressed="true"><span class="dot" style="background:var(--high)"></span>High</button>
@@ -101,6 +104,8 @@ h2{font-family:var(--display);font-size:20px;margin:6px 0 0}
   <span><i style="background:var(--low)"></i>Low priority</span>
   <span><i style="border:2px solid var(--clash)"></i>Overlaps another screening</span>
   <span><i style="border:3px solid var(--chosen)"></i>Chosen</span>
+  <span><i style="border:2px dashed var(--queue);background:var(--queue-bg)"></i>Queue time for a free screening</span>
+  <span><b style="font:700 10px var(--mono);background:var(--fg);color:var(--panel);padding:1px 5px;border-radius:4px">PAID</b> ticket needed</span>
 </div>
 <div class="ccw" id="ccw" hidden></div>
 <div class="tba" id="tba"></div>
@@ -156,11 +161,16 @@ function render(){
       b.className=`blk ${e.p}${e._clash?' clash':''}${isCh?' chosen':''}${e._cc?' cc':''}${other?' dim':''}`;
       const w=100/e._n;b.style.left=`calc(${e._lane*w}% + 3px)`;b.style.width=`calc(${w}% - 6px)`;
       b.style.top=((e.s-H0*60)/60*HOUR+1)+'px';b.style.height=((e.e-e.s)/60*HOUR-2)+'px';
-      b.innerHTML=`<span class="tag">${e.p}${e.q?' · Q&amp;A':''}</span><span class="tt">${e.t}</span><span class="fe">${e.f==='French Film Festival'?'French Fest · Free':e.f==='QCinema'?'QCinema · 200':e.f}</span><span class="mt">${e.st} to ${e.en}</span><span class="mt">${short(e.v)}</span>`;
+      b.innerHTML=`<span class="tag">${e.p}${e.q?' · Q&amp;A':''}</span><span class="tt">${e.t}</span><span class="pay ${e.f==='QCinema'?'paid':'free'}">${e.f==='QCinema'?'PAID 200':'FREE · QUEUE'}</span><span class="fe">${e.f==='French Film Festival'?'French Fest':e.f}</span><span class="mt">${e.st} to ${e.en}</span><span class="mt">${short(e.v)}</span>`;
       b.title=`${e.t}\n${e.f}\n${e.st} to ${e.en}\n${e.v}${e._clash?'\nOverlaps another screening':''}`;
       b.setAttribute('aria-pressed',isCh?'true':'false');
       b.onclick=()=>{if(chosen[e.t]===e.id) delete chosen[e.t]; else chosen[e.t]=e.id; save(); render()};
       col.appendChild(b)});
+    const chd=evs.filter(e=>chosen[e.t]===e.id).sort((a,b)=>a.s-b.s);
+    chd.forEach((e,i)=>{if(e.f==='QCinema')return;const prev=chd.filter(o=>o.e<=e.s).reduce((m,o)=>Math.max(m,o.e),0);const qs=Math.max(e.s-60,prev);if(qs>=e.s)return;
+      const q=document.createElement('div');q.className='q';const L=e._lane,w=100/e._n;q.style.left=`calc(${L*w}% + 3px)`;q.style.width=`calc(${w}% - 6px)`;
+      q.style.top=((qs-H0*60)/60*HOUR+1)+'px';q.style.height=((e.s-qs)/60*HOUR-2)+'px';const f=x=>{const hh=Math.floor(x/60)%24,mm=x%60;return ((hh+11)%12+1)+':'+String(mm).padStart(2,'0')+' '+(hh>=12?'PM':'AM')};
+      q.innerHTML=`<b>Queue · free entry</b><span>${f(qs)} to ${f(e.s)} · ${short(e.v)}</span>`;q.title=`Queue for ${e.t}, free admission, seats not reserved\n${f(qs)} to ${f(e.s)}`;col.appendChild(q)});
     cal.appendChild(col)});
   ['high','mid','low'].forEach(p=>document.getElementById('f-'+p).setAttribute('aria-pressed',show[p]));
   document.getElementById('f-chosen').setAttribute('aria-pressed',chosenOnly);
