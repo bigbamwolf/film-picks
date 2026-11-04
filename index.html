@@ -156,7 +156,7 @@ function render(){
       b.className=`blk ${e.p}${e._clash?' clash':''}${isCh?' chosen':''}${e._cc?' cc':''}${other?' dim':''}`;
       const w=100/e._n;b.style.left=`calc(${e._lane*w}% + 3px)`;b.style.width=`calc(${w}% - 6px)`;
       b.style.top=((e.s-H0*60)/60*HOUR+1)+'px';b.style.height=((e.e-e.s)/60*HOUR-2)+'px';
-      b.innerHTML=`<span class="tag">${e.p}${e.q?' · Q&amp;A':''}</span><span class="tt">${e.t}</span><span class="fe">${e.f==='French Film Festival'?'French Fest':e.f}</span><span class="mt">${e.st} to ${e.en}</span><span class="mt">${short(e.v)}</span>`;
+      b.innerHTML=`<span class="tag">${e.p}${e.q?' · Q&amp;A':''}</span><span class="tt">${e.t}</span><span class="fe">${e.f==='French Film Festival'?'French Fest · Free':e.f==='QCinema'?'QCinema · 200':e.f}</span><span class="mt">${e.st} to ${e.en}</span><span class="mt">${short(e.v)}</span>`;
       b.title=`${e.t}\n${e.f}\n${e.st} to ${e.en}\n${e.v}${e._clash?'\nOverlaps another screening':''}`;
       b.setAttribute('aria-pressed',isCh?'true':'false');
       b.onclick=()=>{if(chosen[e.t]===e.id) delete chosen[e.t]; else chosen[e.t]=e.id; save(); render()};
