@@ -1,0 +1,206 @@
+
+<title>November 2026 Festival Picks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: festival grid, day columns across, clock down the side, screenings as blocks coloured by Boss's priority */
+:root{
+  --bg:#f3f2ee; --panel:#ffffff; --fg:#1d1c22; --muted:#6b6873; --line:#dcd9e0; --grid:#ecebef;
+  --high:#d6336c; --high-bg:#fde3ec; --mid:#d98a00; --mid-bg:#fff0cf; --low:#4f6fb3; --low-bg:#e2e9f8;
+  --clash:#b02020; --chosen:#1d1c22; --queue:#0f8a7a; --queue-bg:#d9f3ee;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --hour:64px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141318; --panel:#1c1b22; --fg:#efedf3; --muted:#9d99a8; --line:#33313c; --grid:#24232b;
+  --high:#ff6b9a; --high-bg:#3a1a27; --mid:#ffb938; --mid-bg:#3a2c10; --low:#86a6ef; --low-bg:#1c2640;
+  --clash:#ff7070; --chosen:#efedf3; --queue:#4fd1bd; --queue-bg:#123530; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141318; --panel:#1c1b22; --fg:#efedf3; --muted:#9d99a8; --line:#33313c; --grid:#24232b;
+  --high:#ff6b9a; --high-bg:#3a1a27; --mid:#ffb938; --mid-bg:#3a2c10; --low:#86a6ef; --low-bg:#1c2640;
+  --clash:#ff7070; --chosen:#efedf3; --queue:#4fd1bd; --queue-bg:#123530; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:14px}
+.wrap{padding-inline:16px;padding-block:24px 40px;max-width:1280px;margin:0 auto;display:grid;gap:18px}
+header{display:grid;gap:6px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,5vw,44px);line-height:1;margin:0;text-wrap:balance}
+.sub{color:var(--muted);margin:0;max-width:65ch}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{font:600 13px var(--body);border:1.5px solid var(--line);background:var(--panel);color:var(--fg);border-radius:999px;padding:7px 14px;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
+.chip .dot{width:10px;height:10px;border-radius:50%}
+.chip[aria-pressed="false"]{opacity:.45;text-decoration:line-through}
+.chip:focus-visible,.blk:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.chip.ghost{border-style:dashed}
+.sp{flex:1}
+.stats{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.scroller{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px}
+.cal{display:grid;grid-template-columns:52px repeat(var(--days),minmax(150px,1fr));min-width:calc(52px + var(--days)*150px)}
+.dh{position:sticky;top:0;z-index:3;background:var(--panel);border-bottom:1px solid var(--line);padding:10px 8px;display:grid;gap:2px}
+.dh b{font-family:var(--display);font-size:18px;font-weight:700}
+.dh span{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.dh .cnt{color:var(--clash)}
+.corner{background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;left:0;z-index:4}
+.axis{position:relative;border-right:1px solid var(--line)}
+.axis div{position:absolute;right:6px;transform:translateY(-50%);font-family:var(--mono);font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.col{position:relative;border-right:1px solid var(--grid);background-image:repeating-linear-gradient(to bottom,var(--grid) 0 1px,transparent 1px var(--hour))}
+.blk{position:absolute;border-radius:6px;padding:6px 7px;overflow:hidden;cursor:pointer;border:1.5px solid var(--c);background:var(--cb);color:var(--fg);text-align:left;font:inherit;display:grid;align-content:start;gap:2px;transition:opacity .15s}
+.blk::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--c)}
+.blk .tt{font-weight:600;font-size:12.5px;line-height:1.15;padding-left:3px}
+.blk .mt{font-family:var(--mono);font-size:10.5px;color:var(--muted);padding-left:3px;font-variant-numeric:tabular-nums}
+.blk .tag{justify-self:start;margin-left:3px;font:600 9.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--c)}
+.blk.high{--c:var(--high);--cb:var(--high-bg)} .blk.mid{--c:var(--mid);--cb:var(--mid-bg)} .blk.low{--c:var(--low);--cb:var(--low-bg)}
+.blk.clash{box-shadow:inset 0 0 0 1px var(--clash)}
+.blk.chosen{border-width:3px;border-color:var(--chosen);z-index:2}
+.blk.chosen .tag::after{content:"  CHOSEN";color:var(--chosen)}
+.blk.dim{opacity:.28}
+.q{position:absolute;border-radius:6px;border:1.5px dashed var(--queue);background:var(--queue-bg);color:var(--fg);padding:4px 7px;display:grid;align-content:start;gap:1px;overflow:hidden;z-index:1}
+.q b{font:600 9.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--queue)}.q span{font:500 10.5px var(--mono);color:var(--muted)}
+.pay{font:700 9.5px var(--mono);letter-spacing:.06em;padding:1px 5px;border-radius:4px;justify-self:start;margin-left:3px}.pay.paid{background:var(--fg);color:var(--panel)}.pay.free{border:1.5px solid var(--queue);color:var(--queue)}
+.blk.cc{border-color:var(--clash);border-width:3px}.blk.cc .tag::after{content:"  CLASH";color:var(--clash)}
+.ccw{background:var(--panel);border:2px solid var(--clash);border-radius:8px;padding:10px 14px;font-size:13px;display:grid;gap:4px}.ccw b{color:var(--clash);font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:6px}
+.films{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.film{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:8px;padding:12px 14px;display:grid;gap:6px;min-width:0}
+.film.high{--c:var(--high)} .film.mid{--c:var(--mid)} .film.low{--c:var(--low)}
+.film h3{margin:0;font-family:var(--display);font-size:17px;font-weight:700}
+.film .m{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.film p{margin:0;font-size:13px;line-height:1.45}
+.film ul{margin:0;padding-left:16px;font-size:12.5px;font-variant-numeric:tabular-nums}
+.film li.ch{font-weight:600}
+.tba{display:grid;gap:8px}.tbi{background:var(--panel);border:1.5px dashed var(--c);border-left:6px solid var(--c);border-radius:8px;padding:10px 14px;display:grid;gap:3px;min-width:0}.tbi.high{--c:var(--high)}.tbi.mid{--c:var(--mid)}.tbi.low{--c:var(--low)}.tbi b{font-family:var(--display);font-size:16px}.tbi .m{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}.tbi p{margin:0;font-size:13px}.tbi a{color:var(--fg)}
+.blk .fe{font:500 9.5px var(--mono);color:var(--muted);padding-left:3px;text-transform:uppercase;letter-spacing:.06em}
+.adl{border-bottom:1px solid var(--line);border-right:1px solid var(--line);font:500 9.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding:8px 4px;text-align:right;position:sticky;left:0;background:var(--panel)}
+.adc{border-bottom:1px solid var(--line);border-right:1px solid var(--grid);padding:6px 4px;display:grid;gap:4px;align-content:start;min-height:28px}
+.adb{position:relative;border:1.5px solid var(--c);background:var(--cb);color:var(--fg);border-radius:6px;padding:5px 7px 5px 10px;text-align:left;font:inherit;cursor:pointer;display:grid;gap:1px;overflow:hidden}
+.adb::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--c)}
+.adb .tt{font-weight:600;font-size:12px;line-height:1.15}.adb .tag{font:600 9.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--c)}
+.adb.high{--c:var(--high);--cb:var(--high-bg)}.adb.mid{--c:var(--mid);--cb:var(--mid-bg)}.adb.low{--c:var(--low);--cb:var(--low-bg)}
+.adb.chosen{border-width:3px;border-color:var(--chosen)}.adb.chosen .tag::after{content:"  CHOSEN";color:var(--chosen)}.adb.dim{opacity:.28}
+.adb:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+h2{font-family:var(--display);font-size:20px;margin:6px 0 0}
+@media (prefers-reduced-motion:reduce){.blk{transition:none}}
+</style>
+<div class="wrap">
+<header>
+  <div class="eyebrow">French Film Festival · QCinema · Japanese Film Festival · Cinemas · November 7 to 29, 2026</div>
+  <h1>November 2026 Festival Picks</h1>
+  <p class="sub">Every screening of the films on my list across three festivals and regular cinemas, coloured by priority. Films with a date but no showtime yet sit in the top row of their day. Slots already on my Google Calendar start out chosen. Plan A, the locked version with only the chosen screenings: <a href="plan-a.html">plan-a.html</a>. Tap a screening to choose it and the other screenings of that film fade out. PAID means a QCinema ticket (200, buy on Ticketnet). FREE screenings have no reserved seats, so each chosen one gets a teal queue tile: an hour before, or right after the previous film if that ends later. A red outline marks screenings that overlap another one.</p>
+</header>
+<div class="bar" id="bar">
+  <button class="chip" id="f-high" data-p="high" aria-pressed="true"><span class="dot" style="background:var(--high)"></span>High</button>
+  <button class="chip" id="f-mid" data-p="mid" aria-pressed="true"><span class="dot" style="background:var(--mid)"></span>Mid</button>
+  <button class="chip" id="f-low" data-p="low" aria-pressed="true"><span class="dot" style="background:var(--low)"></span>Low</button>
+  <span class="sp" style="flex:0 0 8px"></span><button class="chip fest" id="ff-0" data-f="French Film Festival" aria-pressed="true">French</button><button class="chip fest" id="ff-1" data-f="QCinema" aria-pressed="true">QCinema</button><button class="chip fest" id="ff-2" data-f="Japanese Film Festival" aria-pressed="true">Japanese</button><button class="chip fest" id="ff-3" data-f="Cinemas" aria-pressed="true">Cinemas</button>
+  <button class="chip ghost" id="f-chosen" aria-pressed="false">Chosen only</button>
+  <button class="chip ghost" id="reset">Clear choices</button>
+  <span class="sp"></span><span class="stats" id="stats"></span>
+</div>
+<div class="legend">
+  <span><i style="background:var(--high)"></i>High priority</span>
+  <span><i style="background:var(--mid)"></i>Mid priority</span>
+  <span><i style="background:var(--low)"></i>Low priority</span>
+  <span><i style="border:2px solid var(--clash)"></i>Overlaps another screening</span>
+  <span><i style="border:3px solid var(--chosen)"></i>Chosen</span>
+  <span><i style="border:2px dashed var(--queue);background:var(--queue-bg)"></i>Queue time for a free screening</span>
+  <span><b style="font:700 10px var(--mono);background:var(--fg);color:var(--panel);padding:1px 5px;border-radius:4px">PAID</b> ticket needed</span>
+</div>
+<div class="ccw" id="ccw" hidden></div>
+<div class="tba" id="tba"></div>
+<div class="scroller"><div class="cal" id="cal"></div></div>
+<h2>The films</h2>
+<div class="films" id="films"></div>
+</div>
+<script>
+const DATA={"events": [{"id": "gateway-cinema-12-2026-11-14-3", "t": "Fjord", "p": "low", "v": "Gateway Cinema 5", "date": "2026-11-14", "s": 750, "e": 896, "st": "12:30 PM", "en": "2:56 PM", "q": false, "free": false, "f": "QCinema", "price": "200"}, {"id": "gateway-cinema-12-2026-11-14-4", "t": "Vintage Violence", "p": "mid", "v": "Cinema 12, Gateway 2 Cineplex 18", "date": "2026-11-14", "s": 935, "e": 1040, "st": "3:35 PM", "en": "5:20 PM", "q": false, "free": false, "f": "QCinema", "price": "200", "booked": true}, {"id": "gateway-cinema-12-2026-11-15-4", "t": "Furies", "p": "mid", "v": "Cinema 11, Gateway 2 Cineplex 18", "date": "2026-11-15", "s": 1260, "e": 1393, "st": "9:00 PM", "en": "11:13 PM", "q": false, "free": false, "f": "QCinema", "price": "200", "booked": true}, {"id": "gateway-cinema-12-2026-11-19-3", "t": "Teenage Sex and Death at Camp Miasma", "p": "mid", "v": "Cinema 3, Ayala Malls Cinemas TriNoma", "date": "2026-11-17", "s": 765, "e": 877, "st": "12:45 PM", "en": "2:37 PM", "q": false, "free": false, "f": "QCinema", "price": "200"}, {"id": "gateway-cinema-12-2026-11-21-3", "t": "A Long Winter", "p": "mid", "v": "Cinema 12, Gateway 2 Cineplex 18", "date": "2026-11-21", "s": 765, "e": 883, "st": "12:45 PM", "en": "2:43 PM", "q": false, "free": false, "f": "QCinema", "price": "200", "booked": true}, {"id": "gateway-cinema-12-2026-11-22-3", "t": "Patay na si Hesus", "p": "high", "v": "Cinema 12, Gateway 2 Cineplex 18", "date": "2026-11-22", "s": 1110, "e": 1200, "st": "6:30 PM", "en": "8:00 PM", "q": false, "free": false, "f": "QCinema", "price": "200", "booked": true}, {"id": "gateway-cinema-16-2026-11-15-2", "t": "Teenage Sex and Death at Camp Miasma", "p": "mid", "v": "Cinema 16, Gateway 2 Cineplex 18", "date": "2026-11-14", "s": 1160, "e": 1272, "st": "7:20 PM", "en": "9:12 PM", "q": false, "free": false, "f": "QCinema", "price": "200"}, {"id": "gateway-cinema-17-2026-11-17-5", "t": "A Long Winter", "p": "mid", "v": "Cinema 3, Robinsons Movieworld Galleria", "date": "2026-11-17", "s": 1280, "e": 1398, "st": "9:20 PM", "en": "11:18 PM", "q": false, "free": false, "f": "QCinema", "price": "200"}, {"id": "gateway-cinema-17-2026-11-20-5", "t": "Teenage Sex and Death at Camp Miasma", "p": "mid", "v": "Cinema 12, Gateway 2 Cineplex 18", "date": "2026-11-21", "s": 1095, "e": 1207, "st": "6:15 PM", "en": "8:07 PM", "q": false, "free": false, "f": "QCinema", "price": "200", "booked": true}, {"id": "gateway-cinema-17-2026-11-21-2", "t": "Furies", "p": "mid", "v": "Cinema 3, Fisher Box Office, Fisher Mall", "date": "2026-11-19", "s": 1200, "e": 1333, "st": "8:00 PM", "en": "10:13 PM", "q": false, "free": false, "f": "QCinema", "price": "200"}, {"id": "gateway-cinema-17-2026-11-22-2", "t": "Fjord", "p": "low", "v": "Cinema 12, Gateway 2 Cineplex 18", "date": "2026-11-21", "s": 915, "e": 1061, "st": "3:15 PM", "en": "5:41 PM", "q": false, "free": false, "f": "QCinema", "price": "200", "booked": true}, {"id": "trinoma-2026-11-16-3", "t": "A Long Winter", "p": "mid", "v": "Cinema 3, Ayala Malls Cinemas TriNoma", "date": "2026-11-16", "s": 960, "e": 1078, "st": "4:00 PM", "en": "5:58 PM", "q": false, "free": false, "f": "QCinema", "price": "200"}, {"id": "trinoma-2026-11-16-4", "t": "Vintage Violence", "p": "mid", "v": "Cinema 3, Ayala Malls Cinemas TriNoma", "date": "2026-11-16", "s": 1110, "e": 1215, "st": "6:30 PM", "en": "8:15 PM", "q": false, "free": false, "f": "QCinema", "price": "200"}, {"id": "galleria-2026-11-16-2", "t": "Furies", "p": "mid", "v": "Cinema 3, Robinsons Movieworld Galleria", "date": "2026-11-16", "s": 910, "e": 1043, "st": "3:10 PM", "en": "5:23 PM", "q": false, "free": false, "f": "QCinema", "price": "200"}, {"id": "galleria-2026-11-16-3", "t": "Fjord", "p": "low", "v": "Cinema 3, Robinsons Movieworld Galleria", "date": "2026-11-16", "s": 1080, "e": 1226, "st": "6:00 PM", "en": "8:26 PM", "q": false, "free": false, "f": "QCinema", "price": "200"}, {"id": "fairview-2026-11-19-4", "t": "Vintage Violence", "p": "mid", "v": "Cinema 12, Gateway 2 Cineplex 18", "date": "2026-11-19", "s": 1260, "e": 1365, "st": "9:00 PM", "en": "10:45 PM", "q": false, "free": false, "f": "QCinema", "price": "200"}, {"id": "gateway-cinema-16-2026-11-18-you-can-see-everything", "t": "You Can See Everything", "p": "high", "v": "Cinema 12, Gateway 2 Cineplex 18", "date": "2026-11-17", "s": 1215, "e": 1389, "st": "8:15 PM", "en": "11:09 PM", "q": false, "free": false, "f": "QCinema", "price": "200", "booked": true}, {"id": "De-Gaulle,-P-2026-11-11-780", "t": "De Gaulle, Part 1: L'âge de Fer", "p": "high", "v": "SM City Manila", "date": "2026-11-11", "s": 780, "e": 930, "st": "1:00 PM", "en": "3:30 PM", "q": false, "free": false, "f": "French Film Festival", "price": "", "booked": true}, {"id": "De-Gaulle,-P-2026-11-07-1230", "t": "De Gaulle, Part 1: L'âge de Fer", "p": "high", "v": "SM Aura Premier", "date": "2026-11-07", "s": 1230, "e": 1380, "st": "8:30 PM", "en": "11:00 PM approx", "q": false, "free": false, "f": "French Film Festival", "price": "", "booked": false}, {"id": "De-Gaulle,-P-2026-11-14-1230", "t": "De Gaulle, Part 1: L'âge de Fer", "p": "high", "v": "SM City Manila", "date": "2026-11-14", "s": 1230, "e": 1380, "st": "8:30 PM", "en": "11:00 PM approx", "q": false, "free": false, "f": "French Film Festival", "price": "", "booked": false}, {"id": "De-Gaulle,-P-2026-11-11-1050", "t": "De Gaulle, Part 2: J'écris ton nom", "p": "mid", "v": "SM City Manila", "date": "2026-11-11", "s": 1050, "e": 1200, "st": "5:30 PM", "en": "8:00 PM", "q": false, "free": false, "f": "French Film Festival", "price": "", "booked": true}, {"id": "De-Gaulle,-P-2026-11-08-1230", "t": "De Gaulle, Part 2: J'écris ton nom", "p": "mid", "v": "SM Aura Premier", "date": "2026-11-08", "s": 1230, "e": 1380, "st": "8:30 PM", "en": "11:00 PM approx", "q": false, "free": false, "f": "French Film Festival", "price": "", "booked": false}, {"id": "De-Gaulle,-P-2026-11-15-1230", "t": "De Gaulle, Part 2: J'écris ton nom", "p": "mid", "v": "SM City Manila", "date": "2026-11-15", "s": 1230, "e": 1380, "st": "8:30 PM", "en": "11:00 PM approx", "q": false, "free": false, "f": "French Film Festival", "price": "", "booked": false}, {"id": "Onoda-2026-11-11-1230", "t": "Onoda", "p": "low", "v": "SM City Manila", "date": "2026-11-11", "s": 1230, "e": 1400, "st": "8:30 PM", "en": "11:20 PM", "q": false, "free": false, "f": "French Film Festival", "price": "", "booked": true}, {"id": "Onoda-2026-11-07-1230", "t": "Onoda", "p": "low", "v": "SM City Manila", "date": "2026-11-07", "s": 1230, "e": 1397, "st": "8:30 PM", "en": "11:17 PM approx", "q": false, "free": false, "f": "French Film Festival", "price": "", "booked": false}, {"id": "Onoda-2026-11-09-1230", "t": "Onoda", "p": "low", "v": "SM City Manila", "date": "2026-11-09", "s": 1230, "e": 1397, "st": "8:30 PM", "en": "11:17 PM approx", "q": false, "free": false, "f": "French Film Festival", "price": "", "booked": false}, {"id": "Onoda-2026-11-10-1230", "t": "Onoda", "p": "low", "v": "SM Aura Premier", "date": "2026-11-10", "s": 1230, "e": 1397, "st": "8:30 PM", "en": "11:17 PM approx", "q": false, "free": false, "f": "French Film Festival", "price": "", "booked": false}, {"id": "Onoda-2026-11-13-1230", "t": "Onoda", "p": "low", "v": "SM Aura Premier", "date": "2026-11-13", "s": 1230, "e": 1397, "st": "8:30 PM", "en": "11:17 PM approx", "q": false, "free": false, "f": "French Film Festival", "price": "", "booked": false}, {"id": "Magellan-2026-11-14-1230", "t": "Magellan", "p": "mid", "v": "SM Aura Premier", "date": "2026-11-14", "s": 1230, "e": 1395, "st": "8:30 PM", "en": "11:15 PM", "q": false, "free": false, "f": "French Film Festival", "price": "", "booked": true}, {"id": "remember-aura-2026-11-13-1630", "t": "Remember", "p": "mid", "v": "SM Aura Premier", "date": "2026-11-13", "s": 990, "e": 1101, "st": "4:30 PM", "en": "6:21 PM", "q": false, "free": false, "f": "Cinemas", "price": "paid"}, {"id": "remember-aura-2026-11-14-1630", "t": "Remember", "p": "mid", "v": "SM Aura Premier", "date": "2026-11-14", "s": 990, "e": 1101, "st": "4:30 PM", "en": "6:21 PM", "q": false, "free": false, "f": "Cinemas", "price": "paid"}], "films": {"Furies": {"dir": "Rami Kodeih", "mins": 133, "rating": "R-16", "genres": ["Crime", "Drama", "Thriller"], "log": "During Lebanon’s corruption-fueled economic collapse, the banks freeze millions of depositors out of their own life savings. Maro, a determined single mom, and her wild-hearted sister Dalia begin to scheme a daring, all-night heist to get their own money back.", "country": "Lebanon, Brazil", "fest": "QCinema"}, "Teenage Sex and Death at Camp Miasma": {"dir": "Jane Schoenbrun", "mins": 112, "rating": "R-18", "genres": ["Comedy", "Horror", "Romance"], "log": "After years of slapdash sequels and waning fandom, the Camp Miasma slasher franchise is handed over to an enthusiastic young director for resurrection. But when she visits the original’s star, a now-reclusive actress shrouded in mystery, the two women fall into a blood-soaked world of desire, fear, and delirium.", "country": "Canada, UK, USA", "fest": "QCinema"}, "A Long Winter": {"dir": "Andrew Haigh", "mins": 118, "rating": "R-13", "genres": ["Drama"], "log": "After his mother disappears during the first blizzard of the season, a young man refuses to give up hope as one long Colorado winter reshapes his relationship with his father and his understanding of the man he is becoming.", "country": "Canada, UK", "fest": "QCinema"}, "Fjord": {"dir": "Cristian Mungiu", "mins": 146, "rating": "R-16", "genres": ["Drama", "Thriller"], "log": "After the deaths of Mihai’s parents, Mihai and Lisbeth Gheorghiu leave everything behind in Romania and move with their children to a remote village in Norway, hoping to rebuild their lives near Lisbeth’s family. There, they grow close to their neighbors, the Halbergs, whose warmth offers the promise of a fresh start. But the fragile peace begins to unravel when the Gheorghius’ young daughter, Elia, arrives at school covered in bruises.", "country": "Romania, Norway, France, Finland, Denmark, Sweden, USA", "fest": "QCinema"}, "Vintage Violence": {"dir": "Eugene Kotlyarenko", "mins": 105, "rating": "R-18", "genres": ["Action", "Comedy", "Crime", "Thriller"], "log": "When a disgraced livestreamer discovers a trove of rare vintage denim in a Colorado mine, he follows it to Tokyo and straight into the arms of a woman who may be using him. Caught between desire and betrayal, he soon finds himself entangled in black-market turf wars, yakuza, and a past that refuses to stay buried.", "country": "USA, Japan", "fest": "QCinema"}, "Patay na si Hesus": {"dir": "Victor Villanueva", "mins": 90, "rating": "R-13", "genres": ["Comedy", "Drama"], "log": "When Iyay, a single mother, learns that her estranged husband has died, she drags the entire family on a road trip from Cebu to Dumaguete to attend the funeral.", "country": "Philippines", "fest": "QCinema"}, "You Can See Everything": {"dir": "Nathan Fielder, Lance Oppenheim", "mins": 174, "rating": "R-16", "genres": ["Documentary"], "log": "Thirty-four days before she's sent to prison, notorious Silicon Valley founder Elizabeth Holmes invites a skeptical film crew to document her every move. What begins as an intimate portrait of an enigmatic felon becomes a mind-bending three-year journey into the abyss.", "country": "USA", "fest": "QCinema"}, "De Gaulle, Part 1: L'âge de Fer": {"dir": "Antonin Baudry", "mins": 150, "rating": "", "genres": ["War", "History"], "log": "De Gaulle refuses France's surrender in 1940 and builds the Free French from London. Part 1 of the two part epic.", "country": "France", "fest": "French Film Festival"}, "De Gaulle, Part 2: J'écris ton nom": {"dir": "Antonin Baudry", "mins": 150, "rating": "", "genres": ["War", "History"], "log": "1942 to the Liberation of Paris: Leclerc's desert raid, battles at sea, and the fights with Churchill and Roosevelt. Ends on November 11, 1944.", "country": "France", "fest": "French Film Festival"}, "Onoda": {"dir": "Arthur Harari", "mins": 167, "rating": "", "genres": ["War", "Drama"], "log": "A Japanese soldier keeps fighting in the Philippine jungle for decades after World War II has ended.", "country": "France, Japan", "fest": "French Film Festival"}, "Magellan": {"dir": "Lav Diaz", "mins": 163, "rating": "", "genres": ["History", "Drama"], "log": "Gael García Bernal as Magellan, from Portuguese conquest to his death in the Philippines. Only screening. On my watchlist.", "country": "Gael García Bernal", "fest": "French Film Festival"}, "Remember": {"dir": "", "mins": 111, "rating": "PG", "genres": ["Drama"], "log": "Dingdong Dantes and Marian Rivera as an estranged couple who pretend to be together again for their daughter, whose memory is fading. Two options at SM Aura: Fri Nov 13 with Onoda after, or Sat Nov 14 with Magellan after.", "country": "Dingdong Dantes, Marian Rivera", "fest": "Cinemas"}}, "tba": [{"t": "Throne of Blood", "p": "high", "f": "Japanese Film Festival", "v": "SM North EDSA", "range": "Nov 20 to 29", "note": "Kurosawa in 4K, 110 min, free admission. SM North has not posted times yet. The SM CDO run has it Nov 22 6:30 PM and Nov 27 7:00 PM, so expect something similar.", "link": "https://japanesefilmfestph.jfmo.org.ph/"}], "allday": [{"id": "ad-dune-part-one-2026-11-12", "t": "Dune: Part One", "p": "high", "date": "2026-11-12", "f": "Cinemas", "note": "IMAX rerun, times TBA"}, {"id": "ad-dune-part-two-2026-11-12", "t": "Dune: Part Two", "p": "high", "date": "2026-11-12", "f": "Cinemas", "note": "IMAX rerun, times TBA"}, {"id": "ad-wildwood-2026-11-11", "t": "Wildwood", "p": "mid", "date": "2026-11-11", "f": "Cinemas"}, {"id": "ad-status-rejected-2026-11-18", "t": "Status: Rejected", "p": "high", "date": "2026-11-18", "f": "Cinemas"}, {"id": "ad-the-hunger-games-sunrise-on-the-reaping-2026-11-18", "t": "The Hunger Games: Sunrise on the Reaping", "p": "mid", "date": "2026-11-18", "f": "Cinemas"}, {"id": "ad-you-can-see-everything-2026-11-18", "t": "You Can See Everything", "p": "high", "date": "2026-11-18", "f": "Cinemas"}, {"id": "ad-ghost-soldier-2026-11-18", "t": "Ghost Soldier", "p": "high", "date": "2026-11-18", "f": "Cinemas"}, {"id": "ad-the-further-mis-adventures-of-cliff-booth-2026-11-25", "t": "The Further Mis-Adventures of Cliff Booth", "p": "mid", "date": "2026-11-25", "f": "Cinemas"}]};
+const ORDER={high:0,mid:1,low:2};
+const DAYS=[...new Set(DATA.events.map(e=>e.date).concat((DATA.allday||[]).map(e=>e.date)))].sort();
+const DN=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const H0=Math.floor(Math.min(...DATA.events.map(e=>e.s))/60), H1=Math.ceil(Math.max(...DATA.events.map(e=>e.e))/60);
+const HOUR=64, TOP=0;
+const PLAN_A=!!window.PLAN_A;
+let show={high:true,mid:true,low:true}, fest={'French Film Festival':true,'QCinema':true,'Japanese Film Festival':true,'Cinemas':true}, chosenOnly=false, chosen=null;
+try{chosen=JSON.parse(localStorage.getItem('nov26-chosen')||'null')}catch(e){}
+if(!chosen){chosen={};DATA.events.forEach(e=>{if(e.booked)chosen[e.t]=e.id})}
+const FORCE=[[1,'Teenage Sex and Death at Camp Miasma','gateway-cinema-17-2026-11-20-5'],[2,"Vintage Violence","gateway-cinema-12-2026-11-14-4"],[2,"Furies","gateway-cinema-12-2026-11-15-4"],[2,"You Can See Everything","gateway-cinema-16-2026-11-18-you-can-see-everything"],[2,"A Long Winter","gateway-cinema-12-2026-11-21-3"],[2,"Fjord","gateway-cinema-17-2026-11-22-2"],[2,"Patay na si Hesus","gateway-cinema-12-2026-11-22-3"],[3,'Dune: Part One','ad-dune-part-one-2026-11-12'],[3,'Dune: Part Two','ad-dune-part-two-2026-11-12']];let fv=0;try{fv=+(localStorage.getItem('nov26-force')||0)}catch(e){}
+FORCE.forEach(([v,t,id])=>{if(v>fv)chosen[t]=id});
+if(PLAN_A){chosen={};DATA.events.forEach(e=>{if(e.booked)chosen[e.t]=e.id});FORCE.forEach(([v,t,id])=>{chosen[t]=id});chosenOnly=true}try{localStorage.setItem('nov26-force',String(Math.max(fv,...FORCE.map(f=>f[0]))));localStorage.setItem('nov26-chosen',JSON.stringify(chosen))}catch(e){}
+try{const s=JSON.parse(localStorage.getItem('qc26-show')||'null'); if(s) show=s}catch(e){}
+const save=()=>{if(PLAN_A)return;try{localStorage.setItem('nov26-chosen',JSON.stringify(chosen));localStorage.setItem('qc26-show',JSON.stringify(show))}catch(e){}};
+const short=v=>v.replace(', Gateway 2 Cineplex 18',' · Gateway 2').replace('Ayala Malls Cinemas ','').replace('Robinsons Movieworld ','').replace('Fisher Box Office, ','').replace(/^Cinema (\d+)/,'Cin $1');
+const lab=d=>{const x=new Date(d+'T00:00:00');return {dow:DN[x.getDay()],md:x.toLocaleDateString('en-US',{month:'short',day:'numeric'})}};
+const fmtH=h=>{const hh=h%24,ap=hh>=12?'PM':'AM';return ((hh+11)%12+1)+' '+ap};
+function visible(){return DATA.events.filter(e=>show[e.p]&&fest[e.f]&&(!chosenOnly||chosen[e.t]===e.id))}
+function render(){
+  const cal=document.getElementById('cal'); cal.style.setProperty('--days',DAYS.length); cal.innerHTML='';
+  const H=(H1-H0)*HOUR;
+  const corner=document.createElement('div');corner.className='corner';cal.appendChild(corner);
+  const vis=visible();
+  DAYS.forEach(d=>{const l=lab(d);const n=vis.filter(e=>e.date===d).length+(DATA.allday||[]).filter(a=>a.date===d&&show[a.p]&&fest[a.f]).length;const h=document.createElement('div');h.className='dh';
+    h.innerHTML=`<span>${l.dow}</span><b>${l.md}</b><span>${n} screening${n==1?'':'s'}</span>`;cal.appendChild(h)});
+  const lbl=document.createElement('div');lbl.className='adl';lbl.textContent='No time yet';cal.appendChild(lbl);
+  DAYS.forEach(d=>{const c=document.createElement('div');c.className='adc';
+    (DATA.allday||[]).filter(a=>a.date===d&&show[a.p]&&fest[a.f]&&(!chosenOnly||chosen[a.t]===a.id)).sort((a,b)=>ORDER[a.p]-ORDER[b.p]).forEach(a=>{
+      const b=document.createElement('button');b.type='button';b.id='s-'+a.id;const isCh=chosen[a.t]===a.id,other=chosen[a.t]&&chosen[a.t]!==a.id;
+      b.className=`adb ${a.p}${isCh?' chosen':''}${other?' dim':''}`;b.innerHTML=`<span class="tag">${a.p}</span><span class="tt">${a.t}</span>${a.note?`<span class="tag" style="color:var(--muted)">${a.note}</span>`:''}`;
+      b.setAttribute('aria-pressed',isCh?'true':'false');b.title=`${a.t}\nCinemas, ${d}, showtime not set`;
+      b.onclick=()=>{if(PLAN_A)return;if(chosen[a.t]===a.id) delete chosen[a.t]; else chosen[a.t]=a.id; save(); render()};c.appendChild(b)});
+    cal.appendChild(c)});
+  const ax=document.createElement('div');ax.className='axis';ax.style.height=H+'px';
+  for(let h=H0;h<=H1;h++){const t=document.createElement('div');t.style.top=((h-H0)*HOUR)+'px';t.textContent=fmtH(h);if(h==H0)t.style.transform='none';ax.appendChild(t)}
+  cal.appendChild(ax);
+  DAYS.forEach(d=>{
+    const col=document.createElement('div');col.className='col';col.style.height=H+'px';col.style.setProperty('--hour',HOUR+'px');
+    const evs=vis.filter(e=>e.date===d).sort((a,b)=>a.s-b.s||ORDER[a.p]-ORDER[b.p]);
+    // lanes for overlap
+    const lanes=[];evs.forEach(e=>{let i=lanes.findIndex(end=>end<=e.s);if(i<0){i=lanes.length;lanes.push(0)}lanes[i]=e.e;e._lane=i});
+    evs.forEach(e=>{const grp=evs.filter(o=>o.s<e.e&&o.e>e.s);e._n=Math.max(...grp.map(o=>o._lane))+1;e._clash=grp.length>1;e._cc=chosen[e.t]===e.id&&grp.some(o=>o!==e&&chosen[o.t]===o.id)});
+    evs.forEach(e=>{
+      const b=document.createElement('button');b.type='button';b.id='s-'+e.id;
+      const isCh=chosen[e.t]===e.id, other=chosen[e.t]&&chosen[e.t]!==e.id;
+      b.className=`blk ${e.p}${e._clash?' clash':''}${isCh?' chosen':''}${e._cc?' cc':''}${other?' dim':''}`;
+      const w=100/e._n;b.style.left=`calc(${e._lane*w}% + 3px)`;b.style.width=`calc(${w}% - 6px)`;
+      b.style.top=((e.s-H0*60)/60*HOUR+1)+'px';b.style.height=((e.e-e.s)/60*HOUR-2)+'px';
+      b.innerHTML=`<span class="tag">${e.p}${e.q?' · Q&amp;A':''}</span><span class="tt">${e.t}</span><span class="pay ${e.f==='QCinema'||e.f==='Cinemas'?'paid':'free'}">${e.f==='QCinema'?'PAID 200':e.f==='Cinemas'?'PAID':'FREE · QUEUE'}</span><span class="fe">${e.f==='French Film Festival'?'French Fest':e.f}</span><span class="mt">${e.st} to ${e.en}</span><span class="mt">${short(e.v)}</span>`;
+      b.title=`${e.t}\n${e.f}\n${e.st} to ${e.en}\n${e.v}${e._clash?'\nOverlaps another screening':''}`;
+      b.setAttribute('aria-pressed',isCh?'true':'false');
+      b.onclick=()=>{if(PLAN_A)return;if(chosen[e.t]===e.id) delete chosen[e.t]; else chosen[e.t]=e.id; save(); render()};
+      col.appendChild(b)});
+    const chd=evs.filter(e=>chosen[e.t]===e.id).sort((a,b)=>a.s-b.s);
+    chd.forEach((e,i)=>{if(e.f==='QCinema'||e.f==='Cinemas')return;const prev=chd.filter(o=>o.e<=e.s).reduce((m,o)=>Math.max(m,o.e),0);const qs=Math.max(e.s-60,prev);if(qs>=e.s)return;
+      const q=document.createElement('div');q.className='q';const L=e._lane,w=100/e._n;q.style.left=`calc(${L*w}% + 3px)`;q.style.width=`calc(${w}% - 6px)`;
+      q.style.top=((qs-H0*60)/60*HOUR+1)+'px';q.style.height=((e.s-qs)/60*HOUR-2)+'px';const f=x=>{const hh=Math.floor(x/60)%24,mm=x%60;return ((hh+11)%12+1)+':'+String(mm).padStart(2,'0')+' '+(hh>=12?'PM':'AM')};
+      q.innerHTML=`<b>Queue · free entry</b><span>${f(qs)} to ${f(e.s)} · ${short(e.v)}</span>`;q.title=`Queue for ${e.t}, free admission, seats not reserved\n${f(qs)} to ${f(e.s)}`;col.appendChild(q)});
+    cal.appendChild(col)});
+  ['high','mid','low'].forEach(p=>document.getElementById('f-'+p).setAttribute('aria-pressed',show[p]));
+  document.getElementById('f-chosen').setAttribute('aria-pressed',chosenOnly);
+  const titles=[...new Set(Object.keys(DATA.films).concat((DATA.allday||[]).map(a=>a.t)))], nCh=Object.keys(chosen).length;
+  const qc=Object.entries(chosen).filter(([t,id])=>(DATA.events.find(e=>e.id===id)||{}).f==='QCinema').length;
+  document.getElementById('stats').textContent=`${nCh} of ${titles.length} films chosen · QCinema tickets ${qc*200}`;
+  document.querySelectorAll('[data-f]').forEach(c=>c.setAttribute('aria-pressed',fest[c.dataset.f]));
+  const ch=Object.values(chosen).map(id=>DATA.events.find(e=>e.id===id)).filter(Boolean),pairs=[];
+  ch.forEach((a,i)=>ch.slice(i+1).forEach(b=>{if(a.date===b.date&&a.s<b.e&&b.s<a.e)pairs.push(`${lab(a.date).dow} ${lab(a.date).md}: ${a.t} (${a.st} to ${a.en}) overlaps ${b.t} (${b.st} to ${b.en})`)}));
+  const w=document.getElementById('ccw');w.hidden=!pairs.length;w.innerHTML=`<b>${pairs.length} clash${pairs.length==1?'':'es'} in my chosen screenings</b>`+pairs.map(x=>`<span>${x}</span>`).join('');
+  document.getElementById('tba').innerHTML=(DATA.tba||[]).filter(x=>show[x.p]&&fest[x.f]).map(x=>`<div class="tbi ${x.p}"><span class="m">${x.p} priority · ${x.f} · ${x.range} · times not posted</span><b>${x.t}</b><p>${x.v}. ${x.note} ${x.link?`<a href="${x.link}" target="_blank" rel="noopener">Schedule</a>`:''}</p></div>`).join('');
+  renderFilms();
+}
+function renderFilms(){
+  const box=document.getElementById('films');box.innerHTML='';
+  const pr=t=>DATA.events.find(e=>e.t===t).p;
+  Object.keys(DATA.films).sort((a,b)=>ORDER[pr(a)]-ORDER[pr(b)]||a.localeCompare(b)).forEach(t=>{
+    const f=DATA.films[t],p=pr(t);if(!show[p]||!fest[f.fest])return;if(PLAN_A&&!chosen[t])return;
+    const ss=DATA.events.filter(e=>e.t===t&&(!PLAN_A||chosen[t]===e.id)).sort((a,b)=>a.date.localeCompare(b.date)||a.s-b.s);
+    const el=document.createElement('article');el.className='film '+p;
+    el.innerHTML=`<div class="m">${p.toUpperCase()} PRIORITY · ${f.fest} · ${f.mins} MIN${f.rating?' · '+f.rating:''}</div><h3>${t}</h3><div class="m">${f.dir}${f.country?' · '+f.country:''}</div><p>${f.log}</p><ul>${ss.map(e=>{const l=lab(e.date);return `<li class="${chosen[t]===e.id?'ch':''}">${l.dow} ${l.md}, ${e.st}, ${short(e.v)}${e.q?', Q&amp;A':''}${chosen[t]===e.id?' (chosen)':''}</li>`}).join('')}</ul>`;
+    box.appendChild(el)});
+}
+document.querySelectorAll('[data-p]').forEach(c=>c.onclick=()=>{show[c.dataset.p]=!show[c.dataset.p];save();render()});
+document.querySelectorAll('[data-f]').forEach(c=>c.onclick=()=>{fest[c.dataset.f]=!fest[c.dataset.f];render()});
+if(PLAN_A){document.title='November 2026 Plan A';document.querySelector('h1').textContent='November 2026 Plan A';document.querySelector('.sub').innerHTML='The locked plan. Only the screenings I picked, no backups or options. The full version with every option is at <a href="./">the master calendar</a>.';['f-chosen','reset'].forEach(i=>document.getElementById(i).hidden=true)}
+document.getElementById('f-chosen').onclick=()=>{chosenOnly=!chosenOnly;render()};
+document.getElementById('reset').onclick=()=>{chosen={};save();render()};
+render();
+</script>
+
