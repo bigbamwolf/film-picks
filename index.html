@@ -55,6 +55,8 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,5vw,44px);lin
 .blk.chosen{border-width:3px;border-color:var(--chosen);z-index:2}
 .blk.chosen .tag::after{content:"  CHOSEN";color:var(--chosen)}
 .blk.dim{opacity:.28}
+.blk.cc{border-color:var(--clash);border-width:3px}.blk.cc .tag::after{content:"  CLASH";color:var(--clash)}
+.ccw{background:var(--panel);border:2px solid var(--clash);border-radius:8px;padding:10px 14px;font-size:13px;display:grid;gap:4px}.ccw b{color:var(--clash);font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
 .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--muted)}
 .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:6px}
 .films{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
@@ -100,6 +102,7 @@ h2{font-family:var(--display);font-size:20px;margin:6px 0 0}
   <span><i style="border:2px solid var(--clash)"></i>Overlaps another screening</span>
   <span><i style="border:3px solid var(--chosen)"></i>Chosen</span>
 </div>
+<div class="ccw" id="ccw" hidden></div>
 <div class="tba" id="tba"></div>
 <div class="scroller"><div class="cal" id="cal"></div></div>
 <h2>The films</h2>
@@ -144,11 +147,11 @@ function render(){
     const evs=vis.filter(e=>e.date===d).sort((a,b)=>a.s-b.s||ORDER[a.p]-ORDER[b.p]);
     // lanes for overlap
     const lanes=[];evs.forEach(e=>{let i=lanes.findIndex(end=>end<=e.s);if(i<0){i=lanes.length;lanes.push(0)}lanes[i]=e.e;e._lane=i});
-    evs.forEach(e=>{const grp=evs.filter(o=>o.s<e.e&&o.e>e.s);e._n=Math.max(...grp.map(o=>o._lane))+1;e._clash=grp.length>1});
+    evs.forEach(e=>{const grp=evs.filter(o=>o.s<e.e&&o.e>e.s);e._n=Math.max(...grp.map(o=>o._lane))+1;e._clash=grp.length>1;e._cc=chosen[e.t]===e.id&&grp.some(o=>o!==e&&chosen[o.t]===o.id)});
     evs.forEach(e=>{
       const b=document.createElement('button');b.type='button';b.id='s-'+e.id;
       const isCh=chosen[e.t]===e.id, other=chosen[e.t]&&chosen[e.t]!==e.id;
-      b.className=`blk ${e.p}${e._clash?' clash':''}${isCh?' chosen':''}${other?' dim':''}`;
+      b.className=`blk ${e.p}${e._clash?' clash':''}${isCh?' chosen':''}${e._cc?' cc':''}${other?' dim':''}`;
       const w=100/e._n;b.style.left=`calc(${e._lane*w}% + 3px)`;b.style.width=`calc(${w}% - 6px)`;
       b.style.top=((e.s-H0*60)/60*HOUR+1)+'px';b.style.height=((e.e-e.s)/60*HOUR-2)+'px';
       b.innerHTML=`<span class="tag">${e.p}${e.q?' · Q&amp;A':''}</span><span class="tt">${e.t}</span><span class="fe">${e.f==='French Film Festival'?'French Fest':e.f}</span><span class="mt">${e.st} to ${e.en}</span><span class="mt">${short(e.v)}</span>`;
@@ -163,6 +166,9 @@ function render(){
   const qc=Object.entries(chosen).filter(([t,id])=>(DATA.events.find(e=>e.id===id)||{}).f==='QCinema').length;
   document.getElementById('stats').textContent=`${nCh} of ${titles.length} films chosen · QCinema tickets ${qc*200}`;
   document.querySelectorAll('[data-f]').forEach(c=>c.setAttribute('aria-pressed',fest[c.dataset.f]));
+  const ch=Object.values(chosen).map(id=>DATA.events.find(e=>e.id===id)).filter(Boolean),pairs=[];
+  ch.forEach((a,i)=>ch.slice(i+1).forEach(b=>{if(a.date===b.date&&a.s<b.e&&b.s<a.e)pairs.push(`${lab(a.date).dow} ${lab(a.date).md}: ${a.t} (${a.st} to ${a.en}) overlaps ${b.t} (${b.st} to ${b.en})`)}));
+  const w=document.getElementById('ccw');w.hidden=!pairs.length;w.innerHTML=`<b>${pairs.length} clash${pairs.length==1?'':'es'} in my chosen screenings</b>`+pairs.map(x=>`<span>${x}</span>`).join('');
   document.getElementById('tba').innerHTML=(DATA.tba||[]).filter(x=>show[x.p]&&fest[x.f]).map(x=>`<div class="tbi ${x.p}"><span class="m">${x.p} priority · ${x.f} · ${x.range} · times not posted</span><b>${x.t}</b><p>${x.v}. ${x.note} <a href="${x.link}" target="_blank" rel="noopener">Schedule</a></p></div>`).join('');
   renderFilms();
 }
