@@ -55,6 +55,10 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,5vw,44px);lin
 .blk.chosen{border-width:3px;border-color:var(--chosen);z-index:2}
 .blk.chosen .tag::after{content:"  CHOSEN";color:var(--chosen)}
 .blk.dim{opacity:.28}
+.rem{position:absolute;border-radius:6px;border:1.5px solid #c2410c;background:#ffedd5;color:#7c2d12;padding:4px 7px;display:grid;align-content:start;gap:1px;overflow:hidden;z-index:2}
+.rem b{font:700 9.5px var(--mono);letter-spacing:.08em;text-transform:uppercase}.rem span{font:500 10.5px var(--mono)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .rem{background:#431407;color:#fed7aa;border-color:#fb923c}}
+.dh.clear b{color:var(--muted)}.dh.clear span:last-child{color:var(--queue);font-weight:700}
 .q{position:absolute;border-radius:6px;border:1.5px dashed var(--queue);background:var(--queue-bg);color:var(--fg);padding:4px 7px;display:grid;align-content:start;gap:1px;overflow:hidden;z-index:1}
 .q b{font:600 9.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--queue)}.q span{font:500 10.5px var(--mono);color:var(--muted)}
 .pay{font:700 9.5px var(--mono);letter-spacing:.06em;padding:1px 5px;border-radius:4px;justify-self:start;margin-left:3px}.pay.paid{background:var(--fg);color:var(--panel)}.pay.free{border:1.5px solid var(--queue);color:var(--queue)}
@@ -127,7 +131,7 @@ try{chosen=JSON.parse(localStorage.getItem('nov26-chosen')||'null')}catch(e){}
 if(!chosen){chosen={};DATA.events.forEach(e=>{if(e.booked)chosen[e.t]=e.id})}
 const FORCE=[[1,'Teenage Sex and Death at Camp Miasma','gateway-cinema-17-2026-11-20-5'],[2,"Vintage Violence","gateway-cinema-12-2026-11-14-4"],[2,"You Can See Everything","gateway-cinema-16-2026-11-18-you-can-see-everything"],[2,"A Long Winter","gateway-cinema-12-2026-11-21-3"],[2,"Fjord","gateway-cinema-17-2026-11-22-2"],[2,"Patay na si Hesus","gateway-cinema-12-2026-11-22-3"],[3,'Dune: Part One','ad-dune-part-one-2026-11-12'],[3,'Dune: Part Two','ad-dune-part-two-2026-11-12'],[5,'Dune: Part One','dune1-megamall-2026-11-12'],[5,'Dune: Part Two',null],[7,'Wildwood','ad-wildwood-2026-11-11'],[6,'You Can See Everything','gateway-cinema-16-2026-11-18-you-can-see-everything'],[4,'Remember','remember-aura-2026-11-14-1630'],[4,'Vintage Violence','trinoma-2026-11-16-4'],[4,'Status: Rejected','ad-status-rejected-2026-11-18'],[4,'Ghost Soldier','ad-ghost-soldier-2026-11-18'],[4,'The Hunger Games: Sunrise on the Reaping','ad-the-hunger-games-sunrise-on-the-reaping-2026-11-18'],[4,'The Further Mis-Adventures of Cliff Booth','ad-the-further-mis-adventures-of-cliff-booth-2026-11-25'],[8,'Dune: Part Two','dune2-aura-2026-11-14'],[8,'Remember','remember-aura-2026-11-13-1630'],[13,'Wildwood','wildwood-stamesa-2026-11-15-1430'],[10,'The Hunger Games: Sunrise on the Reaping','hg-glorietta-2026-11-18-1300'],[9,'Throne of Blood','throne-north-2026-11-26-1315']];let fv=0;try{fv=+(localStorage.getItem('nov26-force')||0)}catch(e){}
 FORCE.forEach(([v,t,id])=>{if(v>fv){if(id)chosen[t]=id;else delete chosen[t]}});
-if(PLAN_A){chosen={};DATA.events.forEach(e=>{if(e.booked)chosen[e.t]=e.id});FORCE.forEach(([v,t,id])=>{if(id)chosen[t]=id;else delete chosen[t]});chosenOnly=true;const ids=new Set(Object.values(chosen));DAYS=[...new Set(DATA.events.concat(DATA.allday||[]).filter(e=>ids.has(e.id)).map(e=>e.date))].sort()}try{localStorage.setItem('nov26-force',String(Math.max(fv,...FORCE.map(f=>f[0]))));localStorage.setItem('nov26-chosen',JSON.stringify(chosen))}catch(e){}
+if(PLAN_A){chosen={};DATA.events.forEach(e=>{if(e.booked)chosen[e.t]=e.id});FORCE.forEach(([v,t,id])=>{if(id)chosen[t]=id;else delete chosen[t]});chosenOnly=true;DAYS=[];for(let x=new Date('2026-11-10T00:00:00');x<=new Date('2026-11-30T00:00:00');x.setDate(x.getDate()+1)){DAYS.push(x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'))}}try{localStorage.setItem('nov26-force',String(Math.max(fv,...FORCE.map(f=>f[0]))));localStorage.setItem('nov26-chosen',JSON.stringify(chosen))}catch(e){}
 try{const s=JSON.parse(localStorage.getItem('qc26-show')||'null'); if(s) show=s}catch(e){}
 const save=()=>{if(PLAN_A)return;try{localStorage.setItem('nov26-chosen',JSON.stringify(chosen));localStorage.setItem('qc26-show',JSON.stringify(show))}catch(e){}};
 const short=v=>v.replace(', Gateway 2 Cineplex 18',' · Gateway 2').replace('Ayala Malls Cinemas ','').replace('Robinsons Movieworld ','').replace('Fisher Box Office, ','').replace(/^Cinema (\d+)/,'Cin $1');
@@ -140,9 +144,12 @@ function render(){
   const corner=document.createElement('div');corner.className='corner';cal.appendChild(corner);
   const vis=visible();
   DAYS.forEach(d=>{const l=lab(d);const n=vis.filter(e=>e.date===d).length+(DATA.allday||[]).filter(a=>a.date===d&&show[a.p]&&fest[a.f]).length;const h=document.createElement('div');h.className='dh';
-    h.innerHTML=`<span>${l.dow}</span><b>${l.md}</b><span>${n} screening${n==1?'':'s'}</span>`;cal.appendChild(h)});
+    if(!n)h.classList.add('clear');h.innerHTML=`<span>${l.dow}</span><b>${l.md}</b><span>${n?n+' screening'+(n==1?'':'s'):'CLEAR'}</span>`;cal.appendChild(h)});
   const lbl=document.createElement('div');lbl.className='adl';lbl.textContent='No time yet';cal.appendChild(lbl);
   DAYS.forEach(d=>{const c=document.createElement('div');c.className='adc';
+    {const nx=new Date(d+'T00:00:00');nx.setDate(nx.getDate()+1);const nk=nx.getFullYear()+'-'+String(nx.getMonth()+1).padStart(2,'0')+'-'+String(nx.getDate()).padStart(2,'0');
+     const due=[...new Set(visible().filter(e=>e.f==='QCinema'&&chosen[e.t]===e.id&&e.date===nk).map(e=>e.t))];
+     if(due.length){const r=document.createElement('div');r.className='rem';r.style.position='static';r.innerHTML=`<b>Reminder · 6:00 PM</b><span>Reserve QCinema for tomorrow: ${due.join(', ')}</span>`;c.appendChild(r)}}
     (DATA.allday||[]).filter(a=>a.date===d&&show[a.p]&&fest[a.f]&&(!chosenOnly||chosen[a.t]===a.id)).sort((a,b)=>ORDER[a.p]-ORDER[b.p]).forEach(a=>{
       const b=document.createElement('button');b.type='button';b.id='s-'+a.id;const isCh=chosen[a.t]===a.id,other=chosen[a.t]&&chosen[a.t]!==a.id;
       b.className=`adb ${a.p}${isCh?' chosen':''}${other?' dim':''}`;b.innerHTML=`<span class="tag">${a.p}</span><span class="tt">${a.t}</span>${a.note?`<span class="tag" style="color:var(--muted)">${a.note}</span>`:''}`;
