@@ -137,6 +137,7 @@ const save=()=>{if(PLAN_A)return;try{localStorage.setItem('nov26-chosen',JSON.st
 const short=v=>v.replace(', Gateway 2 Cineplex 18',' · Gateway 2').replace('Ayala Malls Cinemas ','').replace('Robinsons Movieworld ','').replace('Fisher Box Office, ','').replace(/^Cinema (\d+)/,'Cin $1');
 const lab=d=>{const x=new Date(d+'T00:00:00');return {dow:DN[x.getDay()],md:x.toLocaleDateString('en-US',{month:'short',day:'numeric'})}};
 const fmtH=h=>{const hh=h%24,ap=hh>=12?'PM':'AM';return ((hh+11)%12+1)+' '+ap};
+function mall(v){v=(v||'').split(/Grab|\(|\. /)[0];const L=[[/Gateway/i,'Gateway'],[/Galleria/i,'Galleria'],[/TriNoma/i,'TriNoma'],[/Glorietta|GL Cinema/i,'Glorietta'],[/Market! Market!|MM Cinema/i,'Market! Market!'],[/Greenbelt/i,'Greenbelt'],[/Circuit/i,'Circuit'],[/Aura/i,'SM Aura'],[/Megamall/i,'SM Megamall'],[/North EDSA|SM North/i,'SM North EDSA'],[/SM City Manila/i,'SM Manila'],[/Sta\.? Mesa/i,'SM Sta. Mesa'],[/Fairview/i,'SM Fairview'],[/Fisher/i,'Fisher Mall'],[/Shang/i,'Shangri-La'],[/Podium/i,'The Podium'],[/Mall of Asia|MOA/i,'SM MOA'],[/UP Town/i,'UP Town Center'],[/Manila Bay/i,'Manila Bay'],[/Power Plant|Rockwell/i,'Power Plant']];for(const[r,n]of L)if(r.test(v))return n;return v.split(/[,(.]/)[0].trim()}
 function visible(){return DATA.events.filter(e=>show[e.p]&&fest[e.f]&&(!chosenOnly||chosen[e.t]===e.id))}
 function render(){
   const cal=document.getElementById('cal'); cal.style.setProperty('--days',DAYS.length); cal.innerHTML='';
@@ -171,7 +172,7 @@ function render(){
       b.className=`blk ${e.p}${e._clash?' clash':''}${isCh?' chosen':''}${e._cc?' cc':''}${other?' dim':''}`;
       const w=100/e._n;b.style.left=`calc(${e._lane*w}% + 3px)`;b.style.width=`calc(${w}% - 6px)`;
       b.style.top=((e.s-H0*60)/60*HOUR+1)+'px';b.style.height=((e.e-e.s)/60*HOUR-2)+'px';
-      b.innerHTML=`<span class="tag">${e.p}${e.q?' · Q&amp;A':''}</span><span class="tt">${e.t}</span><span class="pay ${e.f==='QCinema'||e.f==='Cinemas'?'paid':'free'}">${e.f==='QCinema'?'PAID 200':e.f==='Cinemas'?'PAID':'FREE · QUEUE'}</span><span class="fe">${e.f==='French Film Festival'?'French Fest':e.f}</span><span class="mt">${e.st} to ${e.en}</span><span class="mt">${short(e.v)}</span>`;
+      b.innerHTML=`<span class="tag">${e.p}${e.q?' · Q&amp;A':''}</span><span class="tt">${e.t}</span><span class="pay ${e.f==='QCinema'||e.f==='Cinemas'?'paid':'free'}">${e.f==='QCinema'?'PAID 200':e.f==='Cinemas'?'PAID':'FREE · QUEUE'}</span><span class="fe">${mall(e.v)}</span><span class="mt">${e.st} to ${e.en}</span><span class="mt">${short(e.v)}</span>`;
       b.title=`${e.t}\n${e.f}\n${e.st} to ${e.en}\n${e.v}${e._clash?'\nOverlaps another screening':''}`;
       b.setAttribute('aria-pressed',isCh?'true':'false');
       b.onclick=()=>{if(PLAN_A)return;if(chosen[e.t]===e.id) delete chosen[e.t]; else chosen[e.t]=e.id; save(); render()};
