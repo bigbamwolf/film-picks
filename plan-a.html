@@ -45,6 +45,7 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,5vw,44px);lin
 .axis{position:relative;border-right:1px solid var(--line)}
 .axis div{position:absolute;right:6px;transform:translateY(-50%);font-family:var(--mono);font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
 .col{position:relative;border-right:1px solid var(--grid);background-image:repeating-linear-gradient(to bottom,var(--grid) 0 1px,transparent 1px var(--hour))}
+.blk.nt{--c:#dc2626;--cb:#fee2e2;background:#fee2e2!important;border-color:#dc2626!important;border-width:2.5px}.blk.nt .pay{background:#dc2626!important;color:#fff!important}
 .blk{position:absolute;border-radius:6px;padding:6px 7px;overflow:hidden;cursor:pointer;border:1.5px solid var(--c);background:var(--cb);color:var(--fg);text-align:left;font:inherit;display:grid;align-content:start;gap:2px;transition:opacity .15s}
 .blk::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--c)}
 .blk .tt{font-weight:600;font-size:12.5px;line-height:1.15;padding-left:3px}
@@ -169,10 +170,11 @@ function render(){
     evs.forEach(e=>{
       const b=document.createElement('button');b.type='button';b.id='s-'+e.id;
       const isCh=chosen[e.t]===e.id, other=chosen[e.t]&&chosen[e.t]!==e.id;
-      b.className=`blk ${e.p}${e._clash?' clash':''}${isCh?' chosen':''}${e._cc?' cc':''}${other?' dim':''}`;
+      const needT=(e.f==='QCinema'||e.f==='Cinemas')&&e.price!=='free', nt=needT&&!e.booked&&isCh;
+      b.className=`blk ${e.p}${e._clash?' clash':''}${isCh?' chosen':''}${e._cc?' cc':''}${other?' dim':''}${nt?' nt':''}`;
       const w=100/e._n;b.style.left=`calc(${e._lane*w}% + 3px)`;b.style.width=`calc(${w}% - 6px)`;
       b.style.top=((e.s-H0*60)/60*HOUR+1)+'px';b.style.height=((e.e-e.s)/60*HOUR-2)+'px';
-      b.innerHTML=`<span class="tag">${e.p}${e.q?' · Q&amp;A':''}</span><span class="tt">${e.t}</span><span class="pay ${e.f==='QCinema'||e.f==='Cinemas'?'paid':'free'}">${e.f==='QCinema'?'PAID 200':e.f==='Cinemas'?'PAID':'FREE · QUEUE'}</span><span class="fe">${mall(e.v)}</span><span class="mt">${e.st} to ${e.en}</span><span class="mt">${short(e.v)}</span>`;
+      b.innerHTML=`<span class="tag">${e.p}${e.q?' · Q&amp;A':''}</span><span class="tt">${e.t}</span><span class="pay ${needT?'paid':'free'}">${!needT?(e.f==='Cinemas'?'FREE · GUEST LIST':'FREE · QUEUE'):e.booked?'TICKET BOUGHT':'NO TICKET YET'}</span><span class="fe">${mall(e.v)}</span><span class="mt">${e.st} to ${e.en}</span><span class="mt">${short(e.v)}</span>`;
       b.title=`${e.t}\n${e.f}\n${e.st} to ${e.en}\n${e.v}${e._clash?'\nOverlaps another screening':''}`;
       b.setAttribute('aria-pressed',isCh?'true':'false');
       b.onclick=()=>{if(PLAN_A)return;if(chosen[e.t]===e.id) delete chosen[e.t]; else chosen[e.t]=e.id; save(); render()};
